@@ -1,3 +1,4 @@
+from agents.reprompt_agent import reprompt_agent
 from agents.fact_check_agent import fact_check_agent
 from agents.consistency_agent import consistency_agent
 from agents.confidence_agent import confidence_agent
@@ -57,3 +58,8 @@ if __name__ == "__main__":
     print("=" * 50)
     print(final)
     print("=" * 50)
+
+    if "HALLUCINATED" in final:
+        corrected = reprompt_agent(question, llm_response, results['fact_check'])
+        print("\n📝 CORRECTED ANSWER:")
+        print(corrected)
