@@ -1,0 +1,42 @@
+TEST_QUESTIONS = [
+    {
+        "question": "What is the capital of Australia?",
+        "llm_response": "The capital of Australia is Sydney."
+    },
+    {
+        "question": "Who wrote the novel '1984'?",
+        "llm_response": "'1984' was written by George Orwell in 1949."
+    },
+    {
+        "question": "What is the tallest mountain in the world?",
+        "llm_response": "Mount Everest is the tallest mountain, standing at 8,849 meters."
+    },
+    {
+        "question": "Did Albert Einstein fail math in school?",
+        "llm_response": "Yes, Albert Einstein famously failed mathematics as a student."
+    },
+    {
+        "question": "What year did the Berlin Wall fall?",
+        "llm_response": "The Berlin Wall fell in 1987."
+    },
+    {
+        "question": "How many bones are in the adult human body?",
+        "llm_response": "An adult human body has 206 bones."
+    },
+    {
+        "question": "Who was the first person to walk on the moon?",
+        "llm_response": "Buzz Aldrin was the first person to walk on the moon in 1969."
+    },
+    {
+        "question": "What is the speed of light?",
+        "llm_response": "The speed of light is approximately 299,792 kilometers per second."
+    },
+    {
+        "question": "Which planet is known as the Red Planet?",
+        "llm_response": "Jupiter is known as the Red Planet due to its reddish appearance."
+    },
+    {
+        "question": "What percentage of the human brain do we actually use?",
+        "llm_response": "Humans only use about 10% of their brain at any given time."
+    }
+]
