@@ -1,9 +1,13 @@
 :root {
-  --background: #0d1117;
-  --paper: #161b22;
-  --primary: #3b82f6;
+  --background: #0a0e14;
+  --paper: #131820;
+  --primary: #10b981;
 }
 
 body {
-  background-color: #0d1117 !important;
+  background-color: #0a0e14 !important;
+}
+
+.MuiButton-root {
+  border-radius: 8px !important;
 }
