@@ -6,41 +6,48 @@ load_dotenv()
 
 llm = ChatGroq(
     api_key=os.getenv("GROQ_API_KEY"),
-    model_name="llama-3.3-70b-versatile"
+    model_name="openai/gpt-oss-20b",
+    temperature=0
 )
+
 
 def consistency_agent(question, llm_response):
     print("🔄 Consistency Agent running...")
 
-    rephrase_prompt = f"""
-    Rephrase this question in a different way, keeping the same meaning:
-    "{question}"
-    Only return the rephrased question, nothing else.
-    """
-    rephrased_question = llm.invoke(rephrase_prompt).content.strip()
+    prompt = f"""
+You are a consistency-verification specialist in a multi-agent
+hallucination detection system.
 
-    second_answer_prompt = f"Answer this question concisely: {rephrased_question}"
-    second_answer = llm.invoke(second_answer_prompt).content.strip()
+Your task is to independently analyze whether the provided answer
+is logically and factually consistent with the question.
 
-    compare_prompt = f"""
-    You are a consistency-checking agent.
+Question:
+{question}
 
-    Original question: {question}
-    Original answer: {llm_response}
+Answer:
+{llm_response}
 
-    Rephrased question: {rephrased_question}
-    New answer: {second_answer}
+Analyze:
+1. What factual claims does the answer make?
+2. Do those claims directly answer the question?
+3. Are there contradictions, impossible statements, or suspicious claims?
+4. Does the answer contain internal inconsistencies?
+5. Based on your analysis, determine whether the answer is consistent.
 
-    Do both answers agree on the same facts, or do they contradict each other?
-    Reply in this exact format:
-    VERDICT: [CONSISTENT/INCONSISTENT]
-    REASON: [one sentence explanation]
-    """
-    result = llm.invoke(compare_prompt)
+Reply ONLY in this format:
+
+VERDICT: [CONSISTENT/INCONSISTENT/UNCERTAIN]
+REASON: [one concise explanation]
+KEY_CLAIM: [the most important claim you evaluated]
+"""
+
+    result = llm.invoke(prompt)
     return result.content
+
 
 if __name__ == "__main__":
     question = "Who invented the telephone?"
     llm_response = "Alexander Graham Bell invented the telephone in 1876."
+
     result = consistency_agent(question, llm_response)
     print(result)
