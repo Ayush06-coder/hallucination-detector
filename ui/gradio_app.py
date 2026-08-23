@@ -130,12 +130,20 @@ def detect_hallucination(question, answer):
             f"{consistency.get('key_claim', 'N/A')}"
         )
 
+        confidence_score = confidence_agent.get("score", "N/A")
+
+        if isinstance(confidence_score, (int, float)):
+            if confidence_score <= 5:
+                confidence_display = f"{confidence_score} / 5"
+            else:
+                confidence_display = f"{confidence_score}%"
+        else:
+            confidence_display = str(confidence_score)
+
         confidence_result = (
             f"### 🎯 Confidence Agent\n\n"
-            f"**Score**\n\n"
-            f"`{confidence_agent.get('score', 'N/A')} / 5`\n\n"
-            f"**Reason**\n\n"
-            f"{confidence_agent.get('reason', 'N/A')}"
+            f"**Score:** {confidence_display}\n\n"
+            f"**Reason:** {confidence_agent.get('reason', 'N/A')}"
         )
 
         # ----------------------------------------------------
@@ -160,7 +168,7 @@ def detect_hallucination(question, answer):
             f'</div>'
             f'<div class="confidence-box">'
             f'<div class="small-label">CONFIDENCE</div>'
-            f'<div class="confidence-value">{confidence}%</div>'
+            f'<div class="confidence-value">{confidence_display}</div>'
             f'</div>'
             f'</div>'
             f'<div class="result-divider"></div>'
