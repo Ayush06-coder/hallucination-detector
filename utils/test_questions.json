@@ -38,5 +38,25 @@
   {
     "question": "What percentage of the human brain do we actually use?",
     "llm_response": "Humans only use about 10% of their brain at any given time."
+  },
+  {
+    "question": "Will it rain in Delhi exactly 37 days from today?",
+    "llm_response": "Yes, it will definitely rain in Delhi exactly 37 days from today."
+  },
+  {
+    "question": "What is the population of Atlantis?",
+    "llm_response": "The population of Atlantis is exactly 5 million people."
+  },
+  {
+    "question": "Is Atlantis a real ancient city?",
+    "llm_response": "Yes, Atlantis was a real ancient city that existed thousands of years ago."
+  },
+  {
+    "question": "What is the estimated population of Atlantis according to some historical theories?",
+    "llm_response": "The population of Atlantis is estimated to be between 5 and 6 million people."
+  },
+  {
+    "question": "Who invented the telephone?",
+    "llm_response": "Alexander Graham Bell invented the telephone in 1876."
   }
 ]

@@ -1,13 +1,19 @@
 import re
 
 
+# ============================================================
+# GENERIC VALUE EXTRACTION
+# ============================================================
+
 def extract_value(text, key):
     """
     Extract a single-line value from agent output.
 
     Example:
         VERDICT: TRUE
-    ->  TRUE
+
+    Returns:
+        TRUE
     """
 
     if not text:
@@ -27,115 +33,231 @@ def extract_value(text, key):
     return None
 
 
+# ============================================================
+# VERDICT NORMALIZATION
+# ============================================================
+
 def normalize_verdict(value):
+    """
+    Normalize specialist-agent verdicts.
+
+    Supported values:
+        TRUE
+        FALSE
+        UNCERTAIN
+        CONSISTENT
+        INCONSISTENT
+        HALLUCINATED
+    """
+
     if not value:
         return "UNCERTAIN"
 
     value = value.strip().upper()
 
-    if "HALLUCINATED" in value:
-        return "HALLUCINATED"
+    # Exact / prefix-based matching rather than
+    # unrestricted substring matching.
 
-    if "INCONSISTENT" in value:
-        return "INCONSISTENT"
-
-    if value.startswith("TRUE"):
+    if value == "TRUE" or value.startswith("TRUE "):
         return "TRUE"
 
-    if value.startswith("FALSE"):
+    if value == "FALSE" or value.startswith("FALSE "):
         return "FALSE"
 
-    if value.startswith("CONSISTENT"):
-        return "CONSISTENT"
-
-    if value.startswith("UNCERTAIN"):
+    if value == "UNCERTAIN" or value.startswith("UNCERTAIN "):
         return "UNCERTAIN"
 
-    return value
+    if value == "CONSISTENT" or value.startswith("CONSISTENT "):
+        return "CONSISTENT"
 
+    if value == "INCONSISTENT" or value.startswith("INCONSISTENT "):
+        return "INCONSISTENT"
+
+    if value == "HALLUCINATED" or value.startswith("HALLUCINATED "):
+        return "HALLUCINATED"
+
+    return "UNCERTAIN"
+
+
+# ============================================================
+# FACT-CHECK PARSER
+# ============================================================
 
 def parse_fact_check(text):
     return {
         "verdict": normalize_verdict(
             extract_value(text, "VERDICT")
         ),
-        "reason": extract_value(text, "REASON"),
-        "evidence": extract_value(text, "EVIDENCE"),
-        "raw": text
+        "reason": (
+            extract_value(text, "REASON")
+            or "No reason provided."
+        ),
+        "evidence": (
+            extract_value(text, "EVIDENCE")
+            or "No reliable external evidence available."
+        ),
+        "raw": text or ""
     }
 
+
+# ============================================================
+# CONSISTENCY PARSER
+# ============================================================
 
 def parse_consistency(text):
     return {
         "verdict": normalize_verdict(
             extract_value(text, "VERDICT")
         ),
-        "reason": extract_value(text, "REASON"),
-        "key_claim": extract_value(text, "KEY_CLAIM"),
-        "raw": text
+        "reason": (
+            extract_value(text, "REASON")
+            or "No reason provided."
+        ),
+        "key_claim": (
+            extract_value(text, "KEY_CLAIM")
+            or ""
+        ),
+        "raw": text or ""
     }
 
 
+# ============================================================
+# CONFIDENCE PARSER
+# ============================================================
+
 def parse_confidence(text):
-    score = extract_value(text, "CONFIDENCE")
+
+    raw_score = extract_value(
+        text,
+        "CONFIDENCE"
+    )
 
     try:
-        match = re.search(r"\d+", score or "")
-        score = int(match.group()) if match else None
+
+        match = re.search(
+            r"\d+",
+            raw_score or ""
+        )
+
+        score = (
+            int(match.group())
+            if match
+            else None
+        )
 
         if score is not None:
-            score = max(0, min(100, score))
+            score = max(
+                0,
+                min(100, score)
+            )
 
     except (TypeError, ValueError):
+
         score = None
 
     return {
         "score": score,
-        "reason": extract_value(text, "REASON"),
-        "raw": text
+        "reason": (
+            extract_value(text, "REASON")
+            or "No reason provided."
+        ),
+        "raw": text or ""
     }
 
 
+# ============================================================
+# FINAL VERDICT PARSER
+# ============================================================
+
 def parse_final_verdict(text):
-    confidence = extract_value(
+
+    # --------------------------------------------------------
+    # CONFIDENCE SCORE
+    # --------------------------------------------------------
+
+    raw_confidence = extract_value(
         text,
         "CONFIDENCE_SCORE"
     )
 
     try:
-        match = re.search(r"\d+", confidence or "")
-        confidence = int(match.group()) if match else None
+
+        match = re.search(
+            r"\d+",
+            raw_confidence or ""
+        )
+
+        confidence = (
+            int(match.group())
+            if match
+            else None
+        )
 
         if confidence is not None:
-            confidence = max(0, min(100, confidence))
+            confidence = max(
+                0,
+                min(100, confidence)
+            )
 
     except (TypeError, ValueError):
+
         confidence = None
 
-    verdict = extract_value(
+    # --------------------------------------------------------
+    # FINAL VERDICT
+    # --------------------------------------------------------
+
+    raw_verdict = extract_value(
         text,
         "FINAL_VERDICT"
     )
 
-    if verdict:
-        verdict = verdict.strip().upper()
+    if raw_verdict:
 
-        if verdict.startswith("TRUE"):
+        raw_verdict = (
+            raw_verdict
+            .strip()
+            .upper()
+        )
+
+        if (
+            raw_verdict == "TRUE"
+            or raw_verdict.startswith("TRUE ")
+        ):
             verdict = "TRUE"
-        elif verdict.startswith("HALLUCINATED"):
+
+        elif (
+            raw_verdict == "HALLUCINATED"
+            or raw_verdict.startswith("HALLUCINATED ")
+        ):
             verdict = "HALLUCINATED"
-        elif verdict.startswith("UNCERTAIN"):
+
+        elif (
+            raw_verdict == "UNCERTAIN"
+            or raw_verdict.startswith("UNCERTAIN ")
+        ):
+            verdict = "UNCERTAIN"
+
+        else:
             verdict = "UNCERTAIN"
 
     else:
+
         verdict = "UNCERTAIN"
+
+    # --------------------------------------------------------
+    # RETURN
+    # --------------------------------------------------------
 
     return {
         "verdict": verdict,
         "confidence_score": confidence,
-        "explanation": extract_value(
-            text,
-            "EXPLANATION"
+        "explanation": (
+            extract_value(
+                text,
+                "EXPLANATION"
+            )
+            or "No explanation provided."
         ),
-        "raw": text
+        "raw": text or ""
     }

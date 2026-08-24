@@ -311,7 +311,6 @@ hallucination-detector/
 ├── utils/
 │   ├── __init__.py
 │   ├── get_input.py
-│   ├── logger.py
 │   ├── result_parser.py
 │   ├── test_questions.json
 │   └── test_questions.py
