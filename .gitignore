@@ -5,3 +5,7 @@ __pycache__/
 .DS_Store
 data/results/*.json
 requirements-chainlit-backup.txt
+.pytest_cache/
+*.egg-info/
+.coverage
+htmlcov/

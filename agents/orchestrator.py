@@ -413,8 +413,18 @@ def build_result(
 
 def save_result(result):
 
+    project_root = os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))
+    )
+
+    results_dir = os.path.join(
+        project_root,
+        "data",
+        "results"
+    )
+
     os.makedirs(
-        "data/results",
+        results_dir,
         exist_ok=True
     )
 
@@ -425,8 +435,7 @@ def save_result(result):
     filename = f"result_{timestamp}.json"
 
     filepath = os.path.join(
-        "data",
-        "results",
+        results_dir,
         filename
     )
 
