@@ -1,5 +1,7 @@
 # 🧠 Hallucination Detector
 
+![Tests](https://github.com/Ayush06-coder/hallucination-detector/actions/workflows/tests.yml/badge.svg)
+
 A multi-agent hallucination detection system that evaluates AI-generated answers using independent fact-checking, consistency analysis, confidence scoring, external web evidence, and automatic answer correction.
 
 ---
