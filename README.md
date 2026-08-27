@@ -67,6 +67,7 @@ AI-Generated Answer
 - Automatic corrected-answer generation
 - JSON result logging
 - Test question bank
+- Automated pytest test suite (44 tests)
 - Interactive Gradio interface
 - Modular Python architecture
 
@@ -286,6 +287,8 @@ The system then displays the detection results, including:
 - Explanation
 - Corrected answer when applicable
 
+> 📸 Screenshots coming soon.
+
 ---
 
 ## 📁 Project Structure
@@ -305,6 +308,12 @@ hallucination-detector/
 │   └── results/
 │       └── .gitkeep
 │
+├── tests/
+│   ├── __init__.py
+│   ├── test_agents.py
+│   ├── test_orchestrator.py
+│   └── test_result_parser.py
+│
 ├── ui/
 │   └── gradio_app.py
 │
@@ -318,6 +327,7 @@ hallucination-detector/
 ├── .env
 ├── .gitignore
 ├── .python-version
+├── LICENSE
 ├── requirements.txt
 └── README.md
 ```
@@ -337,6 +347,7 @@ hallucination-detector/
 | DDGS | Web search |
 | Gradio | User interface |
 | python-dotenv | Environment variable management |
+| pytest | Automated testing |
 | JSON | Result storage |
 
 ---
@@ -404,9 +415,13 @@ The system will ask for a question and an AI-generated answer.
 python ui/gradio_app.py
 ```
 
-The terminal will display the local Gradio URL.
+Alternatively, from the project root:
 
-Open that URL in your browser to use the interface.
+```bash
+python -m ui.gradio_app
+```
+
+Either command works. The terminal will display the local Gradio URL — open it in your browser to use the interface.
 
 ### Run the Fact-Check Agent
 
@@ -460,6 +475,19 @@ The test questions can be used to evaluate different types of claims, including:
 - Estimates
 - Uncertain predictions
 
+### Automated Test Suite
+
+The project includes a `pytest` suite covering the result parser, all four agents (with mocked LLM calls), and the full orchestrator pipeline, including failure-recovery scenarios.
+
+Run it with:
+
+```bash
+pip install -r requirements.txt
+python -m pytest tests/ -v
+```
+
+44 tests currently pass, covering both expected outputs and graceful degradation when an agent or the LLM call fails.
+
 ---
 
 ## 🔐 Environment Variables
@@ -493,7 +521,7 @@ Potential future improvements include:
 - Authentication
 - Persistent database storage
 - Model comparison
-- Automated test suite
+- CI/CD pipeline
 
 ---
 
@@ -518,4 +546,4 @@ https://github.com/Ayush06-coder
 
 ## 📄 License
 
-This project is intended for educational and research purposes.
+This project is licensed under the [MIT License](LICENSE).
