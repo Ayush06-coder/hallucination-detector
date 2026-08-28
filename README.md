@@ -523,7 +523,6 @@ Potential future improvements include:
 - Authentication
 - Persistent database storage
 - Model comparison
-- CI/CD pipeline
 
 ---
 
