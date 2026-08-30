@@ -451,6 +451,31 @@ Individual agents can also be tested independently.
 
 ---
 
+## ☁️ Deployment
+
+The project is deployed on [Render](https://render.com) as a native Python Web Service (no Docker required).
+
+**Live demo:** https://hallucination-detector-q4wz.onrender.com
+
+Deployment setup:
+
+- **Build Command:** `pip install -r requirements.txt`
+- **Start Command:** `python ui/gradio_app.py`
+- **Environment Variable:** `GROQ_API_KEY` (set as a Render secret, not committed to the repo)
+
+The Gradio app binds to `0.0.0.0` and Render's assigned `$PORT` at runtime to work correctly in a cloud environment:
+
+```python
+app.launch(
+    server_name="0.0.0.0",
+    server_port=int(os.environ.get("PORT", 7860))
+)
+```
+
+> Note: Render's free tier spins down after inactivity, so the first request after idle time may take 30–60 seconds to respond.
+
+---
+
 ## 📊 Output
 
 Detection results are saved as JSON files inside:
@@ -555,8 +580,8 @@ Instead of relying on a single LLM judgment, the system uses multiple specialize
 
 B.Tech Computer Science Engineering
 
-GitHub:  
-https://github.com/Ayush06-coder
+GitHub: https://github.com/Ayush06-coder  
+LinkedIn: https://www.linkedin.com/in/ayush-sawhney-b8476a34b
 
 ---
 
