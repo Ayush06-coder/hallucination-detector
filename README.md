@@ -289,7 +289,19 @@ The system then displays the detection results, including:
 - Explanation
 - Corrected answer when applicable
 
-> 📸 Screenshots coming soon.
+### Screenshots
+
+**Home screen — sample cases and custom input:**
+
+![App home screen](screenshots/app-home.png)
+
+**Hallucinated answer detected and corrected:**
+
+![Hallucinated example](screenshots/hallucinated-example.png)
+
+**Correct answer verified as true:**
+
+![True example](screenshots/true-example.png)
 
 ---
 
