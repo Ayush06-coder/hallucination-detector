@@ -2,6 +2,10 @@
 
 ![Tests](https://github.com/Ayush06-coder/hallucination-detector/actions/workflows/tests.yml/badge.svg)
 
+🔗 **[Try it live](https://hallucination-detector-q4wz.onrender.com)** — no installation required.
+
+> Note: the app is hosted on Render's free tier, so it may take 30–60 seconds to wake up if it's been idle.
+
 A multi-agent hallucination detection system that evaluates AI-generated answers using independent fact-checking, consistency analysis, confidence scoring, external web evidence, and automatic answer correction.
 
 ---
@@ -531,7 +535,6 @@ Potential future improvements include:
 - Hallucination benchmark datasets
 - Precision, Recall and F1 evaluation
 - Improved UI visualizations
-- Deployment
 - Authentication
 - Persistent database storage
 - Model comparison
