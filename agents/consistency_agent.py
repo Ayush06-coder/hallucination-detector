@@ -6,41 +6,77 @@ load_dotenv()
 
 llm = ChatGroq(
     api_key=os.getenv("GROQ_API_KEY"),
-    model_name="llama-3.1-8b-instant"
+    model_name="openai/gpt-oss-20b",
+    temperature=0
 )
+
 
 def consistency_agent(question, llm_response):
     print("🔄 Consistency Agent running...")
 
-    rephrase_prompt = f"""
-    Rephrase this question in a different way, keeping the same meaning:
-    "{question}"
-    Only return the rephrased question, nothing else.
-    """
-    rephrased_question = llm.invoke(rephrase_prompt).content.strip()
+    prompt = f"""
+You are a consistency-verification specialist in a
+multi-agent hallucination detection system.
 
-    second_answer_prompt = f"Answer this question concisely: {rephrased_question}"
-    second_answer = llm.invoke(second_answer_prompt).content.strip()
+Question:
+{question}
 
-    compare_prompt = f"""
-    You are a consistency-checking agent.
+AI-Generated Answer:
+{llm_response}
 
-    Original question: {question}
-    Original answer: {llm_response}
+Analyze the answer carefully.
 
-    Rephrased question: {rephrased_question}
-    New answer: {second_answer}
+Check:
 
-    Do both answers agree on the same facts, or do they contradict each other?
-    Reply in this exact format:
-    VERDICT: [CONSISTENT/INCONSISTENT]
-    REASON: [one sentence explanation]
-    """
-    result = llm.invoke(compare_prompt)
-    return result.content
+1. Does the answer directly answer the question?
+2. What factual claims does it make?
+3. Are the claims internally consistent?
+4. Are there contradictions?
+5. Are there impossible or obviously suspicious statements?
+6. Does the answer contain unnecessary claims that could be incorrect?
+
+IMPORTANT:
+
+This agent should evaluate logical and internal consistency.
+Do not pretend to have external evidence.
+
+Use:
+
+CONSISTENT
+- if the answer directly answers the question and contains
+  no obvious contradiction.
+
+INCONSISTENT
+- if the answer contains contradictory, impossible,
+  or clearly incorrect internal claims.
+
+UNCERTAIN
+- if there is not enough information to determine consistency.
+
+Reply ONLY in this format:
+
+VERDICT: [CONSISTENT/INCONSISTENT/UNCERTAIN]
+REASON: [one concise explanation]
+KEY_CLAIM: [the most important claim evaluated]
+"""
+
+    try:
+        result = llm.invoke(prompt)
+        return result.content
+
+    except Exception as e:
+        print(f"❌ Consistency Agent failed: {e}")
+
+        return """
+VERDICT: UNCERTAIN
+REASON: Consistency analysis could not be completed.
+KEY_CLAIM: Unable to determine.
+"""
+
 
 if __name__ == "__main__":
     question = "Who invented the telephone?"
     llm_response = "Alexander Graham Bell invented the telephone in 1876."
+
     result = consistency_agent(question, llm_response)
     print(result)

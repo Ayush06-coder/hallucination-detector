@@ -3,3 +3,8 @@ venv/
 __pycache__/
 *.pyc
 .DS_Store
+data/results/*.json
+.pytest_cache/
+*.egg-info/
+.coverage
+htmlcov/
