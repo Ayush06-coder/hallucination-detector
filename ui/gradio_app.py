@@ -580,12 +580,7 @@ input:focus {
 # ============================================================
 
 with gr.Blocks(
-    title="Hallucination Detector",
-    theme=gr.themes.Base(
-        primary_hue="indigo",
-        neutral_hue="slate"
-    ),
-    css=CSS
+    title="Hallucination Detector"
 ) as app:
 
     # ========================================================
@@ -876,4 +871,10 @@ with gr.Blocks(
 # ============================================================
 
 if __name__ == "__main__":
-    app.launch()
+    app.launch(
+        theme=gr.themes.Base(
+            primary_hue="indigo",
+            neutral_hue="slate"
+        ),
+        css=CSS
+    )
