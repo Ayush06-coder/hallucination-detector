@@ -60,7 +60,7 @@ AI-Generated Answer
 ## ✨ Features
 
 - Multi-agent hallucination detection
-- External web evidence verification
+- External evidence verification (Wikipedia first, web-search fallback)
 - Fact-checking of AI-generated answers
 - Consistency analysis
 - Confidence scoring from 0–100
@@ -139,6 +139,8 @@ Low                              High
 ```
 
 The score considers the results from the Fact-Check and Consistency Agents.
+
+> A **low** score on a wrong answer is expected: it means the system has little confidence that the *original answer* is correct. The **final confidence** shown in the verdict card is separate — it is the Final Judge's certainty in its own verdict (e.g. `HALLUCINATED` at 95%).
 
 ---
 
@@ -253,9 +255,12 @@ The capital of Australia is Canberra.
 
 ## 🌐 Web Verification
 
-The Fact-Check Agent uses `DDGS` to retrieve external web evidence.
+The Fact-Check Agent retrieves external evidence in two stages:
 
-The search system includes:
+1. **Wikipedia API (primary)** — fetches the introductory text of the most relevant articles. It is reliable from cloud hosts and returns authoritative, on-topic evidence.
+2. **DuckDuckGo via `DDGS` (fallback)** — used only if Wikipedia returns nothing.
+
+The DuckDuckGo fallback includes:
 
 - Normal SSL verification
 - SSL fallback
@@ -265,7 +270,7 @@ The search system includes:
 - Concise evidence extraction
 - Graceful search failure handling
 
-If web search is unavailable, the system does not treat the failure as evidence.
+If no evidence can be retrieved, the system does not treat the failure as evidence.
 
 Instead, the detector can return:
 
@@ -362,7 +367,8 @@ hallucination-detector/
 | LangChain | LLM integration |
 | Groq | LLM inference |
 | GPT-OSS 20B | Reasoning and verification |
-| DDGS | Web search |
+| Wikipedia API (httpx) | Primary evidence retrieval |
+| DDGS | Fallback web search |
 | Gradio | User interface |
 | python-dotenv | Environment variable management |
 | pytest | Automated testing |
@@ -552,7 +558,7 @@ The `.gitignore` configuration prevents `.env` from being committed to the repos
 Potential future improvements include:
 
 - Source credibility scoring
-- Multiple independent search engines
+- Additional evidence sources beyond Wikipedia and DuckDuckGo
 - Citation extraction
 - Source ranking
 - Claim-level verification
