@@ -145,6 +145,12 @@ def detect_hallucination(question, answer):
         else:
             confidence_display = str(confidence_score)
 
+        # Final judge confidence (shown in the verdict card)
+        if isinstance(confidence, (int, float)):
+            final_confidence_display = f"{confidence}%"
+        else:
+            final_confidence_display = str(confidence)
+
         confidence_result = (
             f"### 🎯 Confidence Agent\n\n"
             f"**Score:** {confidence_display}\n\n"
@@ -173,7 +179,7 @@ def detect_hallucination(question, answer):
             f'</div>'
             f'<div class="confidence-box">'
             f'<div class="small-label">CONFIDENCE</div>'
-            f'<div class="confidence-value">{confidence_display}</div>'
+            f'<div class="confidence-value">{final_confidence_display}</div>'
             f'</div>'
             f'</div>'
             f'<div class="result-divider"></div>'

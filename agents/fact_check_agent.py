@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 import os
 import time
 
+import httpx
+
 
 load_dotenv()
 
@@ -25,7 +27,97 @@ llm = ChatGroq(
 # WEB SEARCH
 # ---------------------------------------------------------
 
+def search_wikipedia(query, max_results=3):
+    """
+    Fetch evidence from the Wikipedia API (reliable from cloud hosts).
+
+    Returns:
+        str: Formatted evidence, or "" if nothing was found.
+    """
+
+    params = {
+        "action": "query",
+        "format": "json",
+        "generator": "search",
+        "gsrsearch": query,
+        "gsrlimit": max_results,
+        "prop": "extracts",
+        "exintro": 1,
+        "explaintext": 1,
+        "exlimit": max_results,
+        "redirects": 1,
+    }
+
+    headers = {
+        "User-Agent": (
+            "hallucination-detector/1.0 "
+            "(https://github.com/Ayush06-coder/hallucination-detector)"
+        )
+    }
+
+    try:
+        response = httpx.get(
+            "https://en.wikipedia.org/w/api.php",
+            params=params,
+            headers=headers,
+            timeout=10
+        )
+        response.raise_for_status()
+        pages = response.json().get("query", {}).get("pages", {})
+    except Exception as e:
+        print(f"   ⚠️ Wikipedia search failed: {e}")
+        return ""
+
+    ordered = sorted(
+        pages.values(),
+        key=lambda page: page.get("index", 999)
+    )
+
+    parts = []
+
+    for page in ordered:
+        text = (page.get("extract") or "").strip()
+
+        if not text:
+            continue
+
+        if len(text) > 1200:
+            text = text[:1200] + "..."
+
+        title = page.get("title", "")
+        url = (
+            "https://en.wikipedia.org/wiki/"
+            + title.replace(" ", "_")
+        )
+
+        parts.append(
+            f"Source: {title} (Wikipedia)\n"
+            f"Evidence: {text}\n"
+            f"URL: {url}"
+        )
+
+    return "\n\n".join(parts)
+
+
 def search_web(query):
+    """
+    Search for factual evidence: Wikipedia first, DuckDuckGo as fallback.
+    """
+
+    print("🌐 Searching Wikipedia for evidence...")
+
+    wiki_evidence = search_wikipedia(query)
+
+    if wiki_evidence:
+        print("   ✅ Wikipedia evidence found")
+        return wiki_evidence
+
+    print("   ⚠️ No Wikipedia evidence, falling back to DuckDuckGo")
+
+    return search_duckduckgo(query)
+
+
+def search_duckduckgo(query):
     """
     Search the web for factual evidence.
 
